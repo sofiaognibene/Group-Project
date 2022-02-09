@@ -26,10 +26,10 @@ print(g_sentence_list)
 df_duplicates_disease = df_disease.loc[:, ["diseaseid", "disease_name"]].drop_duplicates().sort_values
 
 #6
-'''d = "diseaseid == "+"'" + input("diseaseid: ")+"'"
+d = "diseaseid == "+"'" + input("diseaseid: ")+"'"
 d_sentences = df_disease.query(d)["sentence"]
 d_sentence_list = []
 
 for i in d_sentences:
     d_sentence_list.append(i)
-print(d_sentence_list)'''
+print(d_sentence_list)
