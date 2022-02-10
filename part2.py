@@ -2,6 +2,7 @@ import csv
 from turtle import pd
 import pandas as pd
 import numpy
+from pyparsing import col
 
 #1
 df_disease = pd.read_csv("disease_evidences.tsv", "\t")
@@ -35,6 +36,18 @@ for e in d_sentences:
     d_sentence_list.append(e)
 print(d_sentence_list)'''
 
+#7. Record the 10-top most frequent distinct association between genes and diseases.
+
+df_merge = df_gene.merge(df_disease)
+merge_loc = df_merge.loc[:, ["gene_symbol", "disease_name"]]
+top_10 = merge_loc.groupby(merge_loc.columns.tolist()).size().reset_index().rename(columns={0:'counts'}).\
+    sort_values('counts', ascending= False).iloc[0:10]
+
+#the first step merges the two dataframes based on the pmid, since it is the only element in common
+#next, we select the columns we are interested in
+#finally, we select the first 10 elements in a descending-ordered list based on a new column, which is
+#'counts', that counts the number of gene-disease associations we obtained with the groupby function
+
 #8
 '''gene = "geneid ==" + input("geneid: ")
 query_gene = df_gene.query(gene)["pmid"]
@@ -50,7 +63,7 @@ gd_final = pd.concat(gene_disease)
 print(gd_final)'''
 
 #9
-disease = "diseaseid ==" + "'" + input("diseaseid: ") + "'"
+'''disease = "diseaseid ==" + "'" + input("diseaseid: ") + "'"
 query_disease = df_disease.query(disease)["pmid"]
 
 disease_gene = []
@@ -61,4 +74,4 @@ for z in query_disease:
     disease_gene.append(g_query)
 
 dg_final = pd.concat(disease_gene)
-print(dg_final)
+print(dg_final)'''
