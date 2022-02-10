@@ -14,22 +14,23 @@ shape_gene = df_gene.shape
 df_duplicates_genes = df_gene.loc[:, ["geneid", "gene_symbol"]].drop_duplicates().sort_values
 
 #4
-g = "geneid == " + input("geneid: ")
+'''g = "geneid == " + input("geneid: ")
 g_sentences = df_gene.query(g)["sentence"]
 g_sentence_list = []
 
 for i in g_sentences:
     g_sentence_list.append(i)
-print(g_sentence_list)
+print(g_sentence_list)'''
 
 #5
 df_duplicates_disease = df_disease.loc[:, ["diseaseid", "disease_name"]].drop_duplicates().sort_values
 
 #6
-d = "diseaseid == "+"'" + input("diseaseid: ")+"'"
+
+d = "diseaseid == " + "'" + input("diseaseid: ") + "'"
 d_sentences = df_disease.query(d)["sentence"]
 d_sentence_list = []
 
-for i in d_sentences:
-    d_sentence_list.append(i)
+for e in d_sentences:
+    d_sentence_list.append(e)
 print(d_sentence_list)
