@@ -36,7 +36,7 @@ class Dimensions(Operation):
 
 class Labels(Operation):
     def __init__(self, data: pd.DataFrame):
-        super().__init__(data, "htaml?")
+        super().__init__(data, "html?")
     def execute(self) -> list:
         return self._data.columns.values
 # 3/5
@@ -47,7 +47,7 @@ df_duplicates_disease = df_disease.loc[:, ["diseaseid", "disease_name"]].drop_du
 
 
 class RetrieveColumns(Operation):
-    def __init__(self, data: pd.DataFrame, columns: list[str], repetitions: bool = True, sort: bool = False,
+    def __init__(self, data: pd.DataFrame, columns: 'list[str]', repetitions: bool = True, sort: bool = False,
                  ascending: bool = True, sorter: str = ""):
         super().__init__(data, "html?")
         self.__columns = columns
@@ -78,7 +78,7 @@ print(g_sentence_list)'''
 
 
 class RetrieveColumnCondition(Operation):
-    def __init__(self, data: pd.DataFrame, columns: list[str], input: str, options: list[str]):
+    def __init__(self, data: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]'):
         super().__init__(data, "html?")
         self._columns = columns
         self._input = input
@@ -115,7 +115,7 @@ class Merger(Operation):
 
 
 class Top10(Operation):
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: list[str]):
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]'):
         super().__init__(data, "html?")
         self.__data2 = data2
         self.__columns = columns
@@ -148,7 +148,7 @@ print(gd_final)'''
 
 
 class Associations(RetrieveColumnCondition):
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: list[str], input: str, options: list[str]):
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]'):
         super().__init__(Merger(data, data2).execute(), columns, input, options)
         #self.__data2 = data2
         self._description = "<hmtl>"
