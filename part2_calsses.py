@@ -7,8 +7,8 @@ import pandas as pd
 
 class Operation(ABC):
     def __init__(self, data: pd.DataFrame, description: str):
-        self.__data = data
-        self.__description = description
+        self._data = data
+        self._description = description
 
     @abstractmethod
     def execute(self):
@@ -16,10 +16,10 @@ class Operation(ABC):
 
     @property
     def description(self) -> str:
-        return self.__description
+        return self._description
 
 
-# 1/2
+# 2
 '''
 shape_disease = df_disease.shape
 shape_gene = df_gene.shape
@@ -31,9 +31,14 @@ class Dimensions(Operation):
         super().__init__(data, "html?")
 
     def execute(self) -> tuple:
-        return self.__data.shape
+        return self._data.shape
 
 
+class Labels(Operation):
+    def __init__(self, data: pd.DataFrame):
+        super().__init__(data, "htaml?")
+    def execute(self) -> list:
+        return self._data.columns.values
 # 3/5
 '''
 df_duplicates_genes = df_gene.loc[:, ["geneid", "gene_symbol"]].drop_duplicates().sort_values
@@ -41,7 +46,7 @@ df_duplicates_disease = df_disease.loc[:, ["diseaseid", "disease_name"]].drop_du
 '''
 
 
-class RetriveColumns(Operation):
+class RetrieveColumns(Operation):
     def __init__(self, data: pd.DataFrame, columns: list[str], repetitions: bool = True, sort: bool = False,
                  ascending: bool = True, sorter: str = ""):
         super().__init__(data, "html?")
@@ -53,9 +58,9 @@ class RetriveColumns(Operation):
 
     def execute(self) -> pd.DataFrame:
         if not self.__repetitions:
-            a = self.__data.loc[:, self.__columns].drop_duplicates()
+            a = self._data.loc[:, self.__columns].drop_duplicates()
         else:
-            a = self.__data.loc[:, self.__columns]
+            a = self._data.loc[:, self.__columns]
         if self.__sort:
             return a.sort_values(by=self.__sorter, ascending=self.__ascending)
         else:
@@ -75,16 +80,20 @@ print(g_sentence_list)'''
 class RetrieveColumnCondition(Operation):
     def __init__(self, data: pd.DataFrame, columns: list[str], input: str, options: list[str]):
         super().__init__(data, "html?")
-        self.__columns = columns
-        self.__input = input
-        self.__options = options
+        self._columns = columns
+        self._input = input
+        self._options = options
 
     def execute(self) -> pd.DataFrame:
-        q = ""  # this shit is needed if we do not provide in input the type of research that we want to do
-        for x in self.__options:
-            q += x + " == " + self.__input + " or "
-        q = q[:-4:]
-        return self.__data.query(q).loc[:, self.__columns]
+        try:
+            q = ""  # this shit is needed if we do not provide in input the type of research that we want to do
+            print(self._data)
+            for x in self._options:
+                q += x + " == " + self._input + " or "
+            q = q[:-4:]
+            return self._data.query(q).loc[:, self._columns]
+        except:
+            return "Wrong Input"
 
 
 # 7. Record the 10-top most frequent distinct association between genes and diseases.
@@ -98,11 +107,11 @@ top_10 = merge_loc.groupby(merge_loc.columns.tolist()).size().reset_index().rena
 
 class Merger(Operation):
     def __init__(self, data: pd.DataFrame, data2: pd.DataFrame):
-        super().__init__(data, "html?")
+        super().__init__(data, "Merger")
         self.__data2 = data2
 
     def execute(self) -> pd.DataFrame:
-        return self.__data.merge(self.__data2)
+        return self._data.merge(self.__data2)
 
 
 class Top10(Operation):
@@ -112,8 +121,8 @@ class Top10(Operation):
         self.__columns = columns
 
     def execute(self) -> pd.DataFrame:
-        output = Merger(self.__data, self.__data2)
-        output_loc = RetriveColumns(data=output, columns=self.__columns)
+        output = Merger(self._data, self.__data2).execute()
+        output_loc = RetrieveColumns(data=output, columns=self.__columns).execute()
         return output_loc.groupby(output_loc.columns.tolist()).size().reset_index().rename(
             columns={0: 'counts'}).sort_values('counts', ascending=False).iloc[0:10]
 
@@ -138,19 +147,49 @@ gd_final = pd.concat(gene_disease)
 print(gd_final)'''
 
 
-class Correlation(Operation):
+class Associations(RetrieveColumnCondition):
     def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: list[str], input: str, options: list[str]):
-        super().__init__(data, "html?")
-        self.__data2 = data2
-        self.__columns = columns
-        self.__input = input
-        self.__options = options
+        super().__init__(Merger(data, data2).execute(), columns, input, options)
+        #self.__data2 = data2
+        self._description = "<hmtl>"
 
     def execute(self) -> pd.DataFrame:
-        return RetrieveColumnCondition(Merger(self.__data, self.__data2), self.__columns, self.__input,
-                                       self.__options).drop_duplicates()
+        return super().execute().drop_duplicates()
+       # return super(Merger(self._data, self.__data2).execute(), self._columns, self._input,
+                                      # self._options).execute().drop_duplicates()
 
 
 # 1
+'''
 df_disease = pd.read_csv("disease_evidences.tsv", "\t")
 df_gene = pd.read_csv("gene_evidences.tsv", "\t")
+'''
+# 2 test: works!
+'''
+a = Dimensions(df_gene).execute()
+print(a)
+'''
+
+# 3/5 test: works
+'''
+b = RetrieveColumns(df_gene,["geneid","gene_symbol"], False, True, sorter="geneid").execute()
+print(b)
+df_duplicates_genes = df_gene.loc[:, ["geneid", "gene_symbol"]].drop_duplicates().sort_values
+print(df_duplicates_genes)
+'''
+
+# 4/6 test: works
+'''
+c = RetrieveColumnCondition(df_gene,["sentence"],"1",["geneid","gene_symbol"]).execute()
+print(c)
+'''
+'''
+# 7 test: works
+d = Top10(df_gene, df_disease, ["geneid","gene_symbol","diseaseid","disease_name"]).execute()
+print(d)
+'''
+'''
+# 8/9 test : works
+e = Associations(df_gene,df_disease,["geneid", "gene_symbol", "diseaseid", "disease_name"],"1",["geneid", "gene_symbol", "diseaseid", "disease_name"]).execute()
+print(e)
+'''
