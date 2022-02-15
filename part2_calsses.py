@@ -1,10 +1,6 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 
-
-# to be tested!!!!
-
-
 class Operation(ABC):
     def __init__(self, data: pd.DataFrame, description: str):
         self._data = data
@@ -49,7 +45,7 @@ df_duplicates_disease = df_disease.loc[:, ["diseaseid", "disease_name"]].drop_du
 class RetrieveColumns(Operation):
     def __init__(self, data: pd.DataFrame, columns: 'list[str]', repetitions: bool = True, sort: bool = False,
                  ascending: bool = True, sorter: str = ""):
-        super().__init__(data, "html?")
+        super().__init__(data, "It selects specific columns, eventually deleting repetitions and ordering them.")
         self.__columns = columns
         self.__repetitions = repetitions
         self.__sort = sort
@@ -86,14 +82,14 @@ class RetrieveColumnCondition(Operation):
 
     def execute(self) -> pd.DataFrame:
         try:
-            q = ""  # this shit is needed if we do not provide in input the type of research that we want to do
-            print(self._data)
+            q = ""
             for x in self._options:
-                q += x + " == " + self._input + " or "
+                q += x + " == " + "'"+ self._input + "'"+ " or "
             q = q[:-4:]
+            print(self._data.query(q).loc[:, self._columns])
             return self._data.query(q).loc[:, self._columns]
         except:
-            return "Wrong Input"
+            return "Wrong Input, please retry."
 
 
 # 7. Record the 10-top most frequent distinct association between genes and diseases.

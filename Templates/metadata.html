@@ -1,31 +1,32 @@
 <!doctype HTML>
 <html>
     <head>
-        <title>Metadata</title>
+        <title>{{title}}</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="main.css">
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='main.css') }}>
     </head>
     <body>
         <div class="title">Advanced Programming: Final Project</div>
         <div class="subtitle"><p>Davide Bonfanti, Sofia Ognibene, Daniele Pozzobon</p></div>
-        <p class="main">Metadata</p>
+        <p class="main">{{title}}</p>
         <div class="body">
             <table>
             <tr>
-                <td class="first">Dataset:</td>
-                <td>Gene Dataset</td>
+            {%for i in data.columns.values%}
+                <td class="first">{{i}}</td>
+            {% endfor %}
             </tr>
+            {% for i in range(data.shape[0]) %}
             <tr>
-                <td class="first">Columns</td><td>8</td>
+                {% for j in range(data.shape[1]) %}
+                <td>{{data.iloc[i, j]}}</td>
+                {% endfor %}
             </tr>
-            <tr>
-                <td class="first">Rows</td>
-                <td>10000</td>
-            </tr>
-        </table>
+            {% endfor %}
+            </table>
         </div>
         <div class="navigation">
-            <img  class="home"src="images/home.png" onclick="window.location.href = 'home.html';">
+            <img  class="home"src="ststic/images/home.png" onclick="href = '/';">
         </div>
     </body>
 </html>

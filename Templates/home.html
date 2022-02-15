@@ -3,7 +3,7 @@
     <head>
         <title>Final Project</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="main.css">
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='main.css') }}>
     </head>
     <body>
         <div class="title">Advanced Programming: Final Project</div>
@@ -11,44 +11,39 @@
         <div class="body"><p>This web app allows the user to perform different analytical operations on the DisGeNET COVID-19 data collection. The dataset was obtained identifying mentions of diseases, signs and symptoms among a selection of papers referring to Coronavirus 19 disease. Data are collected in two different sub-datasets, one related to genes and one anoter related to diseases.</p>
         </div>
         <p class="main">Operation Selector</p>
-        <form action="" method="post">
-            <p>Please select the operation you want to perform</p>
-            <input type="radio" required id="metadata" name="request">
-            <label for="summary">Obtain the <b>metadata</b> of a dataset.</label>
+        <form action="selector" method="POST">
+            <p>Please select the operation you want to perform:</p>
+            <input type="radio" required id="metadata" name="request" value="['mtd']">
+            <label for="metadata">Obtain the <b>metadata</b> of the two datasets.</label>
             <br>
-            <input type="radio" required id="semantics" name="request">
-            <label for="semantics">Obtain the <b>semantics</b> of a dataset.</label>
+            <input type="radio" required id="semantics" name="request" value="['sm']">
+            <label for="semantics">Obtain the <b>semantics</b> of the two dataset.</label>
             <br>
-            <input type="radio" required id="gene_list" name="request">
+            <input type="radio" required id="gene_list" name="request" value="['el', 'gene',['geneid','gene_symbol','organism'],'geneid']">
             <label for="gene_list">Obtain the <b>list of genes</b> of the dataset.</label>
             <br>
-            <input type="radio" required id="gene_reference_list" name="request">
+            <input type="radio" required id="gene_reference_list" name="request" value="['rqc', 'gene', ['geneid', 'gene_symbol']]">
             <label for="gene_reference_list">Obtain the <b>list of sentences</b> related to a specific gene ID/gene symbol (write it in the box below).</label>
             <br>
-            <input type="radio" required id="disease_list" name="request">
+            <input type="radio" required id="disease_list" name="request" value="['el', 'disease', ['diseaseid','disease_name','disease_type'],'diseaseid']">
             <label for="disease_list">Obtain the <b>list of diseases</b> of the dataset.</label>
             <br>
-            <input type="radio" required id="disease_reference_list" name="request">
+            <input type="radio" required id="disease_reference_list" name="request" value="['rqc', 'disease',['diseaseid','disease_name']]">
             <label for="disease_reference_list">Obtain the <b>list of sentences</b> related to a specific disease ID/disease name (write it in the box below).</label>
             <br>
-            <input type="radio" required id="association" name="request">
+            <input type="radio" required id="association" name="request" value="t10">
             <label for="association">Obtain the <b>10-top most frequent distinct association</b> between genes and diseases.</label>
             <br>
-            <input type="radio" required id="disease_gene_list" name="request">
+            <input type="radio" required id="disease_gene_list" name="request" value="as [gene">
             <label for="disease_reference_list">Obtain the <b>list of diseases</b> related to a specific gene ID/gene symbol (write it in the box below).</label>
             <br>
             <input type="radio" required id="gene_disease_list" name="request">
             <label for="disease_reference_list">Obtain the <b>list of genes</b> related to a specific disease ID/disease name (write it in the box below).</label>
             <br>
             <p>Please enter additional inputs (if needed).</p>
-            <label for="dataset">Select dataset:</label>
-            <select name="dataset" id="dataset">
-                <option value="n" selected>---</option>
-                <option value="g">Genes</option>
-                <option value="d">Disease</option>
-            </select><br>
-            <label for="txt">ID, name, symbol</label>
+            <label for="txt">ID, name or symbol</label>
             <input id="txt" name="txt">
+
             <button type="submit" name="submit" style="margin-bottom: 6%; margin-top:6%; margin-left: 45%; margin-right: 45%">Enter</button>
         </form>
     </body>

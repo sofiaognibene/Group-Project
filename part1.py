@@ -1,6 +1,20 @@
+from numpy import column_stack
 import pandas as pd
 from abc import ABC, abstractmethod
 import part2_calsses as op
+class DataSet():
+    def __init__(self, name: str, path: str):
+        self.__name = name
+        self.__data = pd.read_csv(path, "\t")
+    
+    @property
+    def name(self) -> str:
+        return self.__name
+    @property
+    def data(self) -> pd.DataFrame:
+        return self.__data
+
+
 
 class OperationBuilder():
     operations_dict = {
@@ -18,11 +32,27 @@ class OperationBuilder():
         operation = OperationBuilder.operations_dict[operation_name]
 
         if operation:
-            return operation(*args)
+            return operation(*args).execute()
         else:
             return None
-df_disease = pd.read_csv("disease_evidences.tsv", "\t")
-df_gene = pd.read_csv("gene_evidences.tsv", "\t")
+
+class OperationManager():
+    @staticmethod
+    def manager(registry: dict, l : str, input : str):
+        L=eval(l)
+        if (L[0]=='mtd'):
+            pass
+        elif(L[0]=='el'):
+            title = registry[L[1]].name[:registry[L[1]].name.index(" "):] + "List"
+            return [OperationBuilder.create(L[0], registry[L[1]].data, L[2], False, True, True, L[3]), title]
+        elif(L[0]=='rqc'):
+            title = registry[L[1]].name[:registry[L[1]].name.index(" "):] + "Quotes"
+            return  [OperationBuilder.create(L[0], registry[L[1]].data, ['sentence'], input, L[2]), title, input]
+
+def read():
+    df_disease = DataSet("Gene Dataset","disease_evidences.tsv")
+    df_gene = DataSet("Disease Dataset","gene_evidences.tsv")
+    return {"gene" : df_gene, "disease" : df_disease}
 
 
 '''
