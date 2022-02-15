@@ -19,7 +19,7 @@
             {% for i in range(data.shape[0]) %}
             <tr>
                 {% for j in range(data.shape[1]) %}
-                <td>{{data.iloc[i, j]}}</td>
+                <td>{{data.iloc[i, j]|safe}}</td>
                 {% endfor %}
             </tr>
             {% endfor %}

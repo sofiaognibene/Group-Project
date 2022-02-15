@@ -43,7 +43,7 @@ class OperationManager():
         if (L[0]=='mtd'):
             pass
         elif(L[0]=='el'):
-            title = registry[L[1]].name[:registry[L[1]].name.index(" "):] + "List"
+            title = registry[L[1]].name[:registry[L[1]].name.index(" "):] + " List"
             return [OperationBuilder.create(L[0], registry[L[1]].data, L[2], False, True, True, L[3]), title]
         elif(L[0]=='rqc'):
             title = registry[L[1]].name[:registry[L[1]].name.index(" "):] + "Quotes"
