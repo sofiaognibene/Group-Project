@@ -10,27 +10,28 @@
         <div class="subtitle"><p>Davide Bonfanti, Sofia Ognibene, Daniele Pozzobon</p></div>
         <p class="main">{{title}}</p>
         <div class="body">
-        {%for des, data in collection.items() %}
             <table style="text-align: center;">
-                <tr>
-                    <td class="first">{{des}}</td>
-                </tr>
+            {% if (val != "")%}
+            <tr>
+                <td class="first">Input:</td>
+                <td>{{val}}</td>
+            </tr>
+            {% endif %}
             </table>
-            <br>
             <table>
-                {% for i in range(data.shape[0]) %}
-                <tr>
-                    {% for j in range(data.shape[1]) %}
-                    <td>{{data.iloc[i, j]}}</td>
-                    {% endfor %}
-                </tr>
+            <tr>
+            {%for i in data.columns.values%}
+                <td class="first">{{i}}</td>
+            {% endfor %}
+            </tr>
+            {% for i in range(data.shape[0]) %}
+            <tr>
+                {% for j in range(data.shape[1]) %}
+                <td>{{data.iloc[i, j]|safe}}</td>
                 {% endfor %}
+            </tr>
+            {% endfor %}
             </table>
-            <br>
-        {% endfor %}
-        {% if data.empty %}
-            <p style="text-align: center; color: rgb(242, 173, 101);">No result with this input, it could be both wrong or not present in the dataset. Please check the list of genes and diseases.</p>
-        {% endif %}
         </div>
         <div class="navigation">
             <a href="/"><img  class="home" src="static/images/home.png"></a>

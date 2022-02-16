@@ -1,77 +1,95 @@
-import csv
-from turtle import pd
+from abc import ABC, abstractmethod
+from heapq import merge
 import pandas as pd
-import numpy
-from pyparsing import col
 
-#1
-df_disease = pd.read_csv("disease_evidences.tsv", "\t")
-df_gene = pd.read_csv("gene_evidences.tsv", "\t")
+class Operation(ABC):
+    def __init__(self, data: pd.DataFrame, description: str):
+        self._data = data
+        self._description = description
 
-#2
-shape_disease = df_disease.shape
-shape_gene = df_gene.shape
+    @abstractmethod
+    def execute(self):
+        pass
 
-#3
-df_duplicates_genes = df_gene.loc[:, ["geneid", "gene_symbol"]].drop_duplicates().sort_values
+    @property
+    def description(self) -> str:
+        return self._description
 
-#4
-'''g = "geneid == " + input("geneid: ")
-g_sentences = df_gene.query(g)["sentence"]
-g_sentence_list = []
+class Dimensions(Operation):
+    def __init__(self, data: pd.DataFrame):
+        super().__init__(data, "html?")
 
-for i in g_sentences:
-    g_sentence_list.append(i)
-print(g_sentence_list)'''
+    def execute(self) -> tuple:
+        return self._data.shape
 
-#5
-df_duplicates_disease = df_disease.loc[:, ["diseaseid", "disease_name"]].drop_duplicates().sort_values
+class Labels(Operation):
+    def __init__(self, data: pd.DataFrame):
+        super().__init__(data, "html?")
+    def execute(self) -> list:
+        return self._data.columns.values
 
-#6
-'''d = "diseaseid == " + "'" + input("diseaseid: ") + "'"
-d_sentences = df_disease.query(d)["sentence"]
-d_sentence_list = []
+class RetrieveColumns(Operation):
+    def __init__(self, data: pd.DataFrame, columns: 'list[str]', repetitions: bool = True, sort: bool = False,
+                 ascending: bool = True, sorter: str = ""):
+        super().__init__(data, "It selects specific columns, eventually deleting repetitions and ordering them.")
+        self.__columns = columns
+        self.__repetitions = repetitions
+        self.__sort = sort
+        self.__ascending = ascending
+        self.__sorter = sorter
 
-for e in d_sentences:
-    d_sentence_list.append(e)
-print(d_sentence_list)'''
+    def execute(self) -> pd.DataFrame:
+        if not self.__repetitions:
+            a = self._data.loc[:, self.__columns].drop_duplicates()
+        else:
+            a = self._data.loc[:, self.__columns]
+        if self.__sort:
+            return a.sort_values(by=self.__sorter, ascending=self.__ascending)
+        else:
+            return a
 
-#7. Record the 10-top most frequent distinct association between genes and diseases.
+class RetrieveColumnCondition(Operation):
+    def __init__(self, data: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]'):
+        super().__init__(data, "html?")
+        self._columns = columns
+        self._input = input
+        self._options = options
 
-df_merge = df_gene.merge(df_disease)
-merge_loc = df_merge.loc[:, ["gene_symbol", "disease_name"]]
-top_10 = merge_loc.groupby(merge_loc.columns.tolist()).size().reset_index().rename(columns={0:'counts'}).\
-    sort_values('counts', ascending= False).iloc[0:10]
+    def execute(self) -> pd.DataFrame:
+        q = ""
+        if self._input.isdigit():
+            for x in self._options:
+                q += x + " == " + self._input + " or "
+        else:
+            for x in self._options:
+                q += x + " == " + "'"+ self._input + "'"+ " or "
+        q = q[:-4:]
+        return self._data.query(q).loc[:, self._columns]
 
-#the first step merges the two dataframes based on the pmid, since it is the only element in common
-#next, we select the columns we are interested in
-#finally, we select the first 10 elements in a descending-ordered list based on a new column, which is
-#'counts', that counts the number of gene-disease associations we obtained with the groupby function
+class Merger(Operation):
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame):
+        super().__init__(data, "Merger")
+        self.__data2 = data2
 
-#8
-'''gene = "geneid ==" + input("geneid: ")
-query_gene = df_gene.query(gene)["pmid"]
+    def execute(self) -> pd.DataFrame:
+        return self._data.merge(self.__data2)
 
-gene_disease = []
+class Top10(Operation):
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]'):
+        super().__init__(data, "html?")
+        self.__data2 = data2
+        self.__columns = columns
 
-for a in query_gene:
-    query_disease = "pmid ==" + str(a)
-    query = df_disease.query(query_disease).loc[:, ["diseaseid", "disease_name"]].drop_duplicates()
-    gene_disease.append(query)
+    def execute(self) -> pd.DataFrame:
+        output = Merger(self._data, self.__data2).execute()
+        output_loc = RetrieveColumns(data=output, columns=self.__columns).execute()
+        return output_loc.groupby(output_loc.columns.tolist()).size().reset_index().rename(
+            columns={0: 'counts'}).sort_values('counts', ascending=False).iloc[0:10]
 
-gd_final = pd.concat(gene_disease)
-print(gd_final)'''
+class Associations(RetrieveColumnCondition):
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]'):
+        super().__init__(Merger(data, data2).execute(), columns, input, options)
+        self._description = "<hmtl>"
 
-#9
-'''disease = "diseaseid ==" + "'" + input("diseaseid: ") + "'"
-query_disease = df_disease.query(disease)["pmid"]
-
-disease_gene = []
-
-for z in query_disease:
-    query_gene = "pmid ==" + str(z)
-    g_query = df_gene.query(query_gene).loc[:, ["geneid"]].drop_duplicates()
-    disease_gene.append(g_query)
-
-dg_final = pd.concat(disease_gene)
-print(dg_final)'''
+    def execute(self) -> pd.DataFrame:
+        return super().execute().drop_duplicates()

@@ -12,7 +12,7 @@
         <div class="quotes">
             <table style="text-align: center;">
             <tr>
-                <td class="first">Gene ID:</td>
+                <td class="first">Input:</td>
                 <td>{{val}}</td>
             </tr>
         </table>
@@ -20,13 +20,18 @@
         {% for i in  range(data.shape[0]):%}
         {% for j in  range(data.shape[1]):%}
         <p class="quote">&#8220</p>
-        {{data.iloc[i,j]}}
+        {{data.iloc[i,j]|safe}}
         <p class="quote">&#8221</p>
         {% endfor %}
         {% endfor %}
         </div>
+        {% if data.empty %}
+        <div class="body" style="text-align: center; color: rgb(242, 173, 101);">
+            <p>No result with this input, it could be both wrong or not present in the dataset. Please check the list of genes and diseases.</p>
+        </div>
+        {% endif %}
         <div class="navigation">
-            <img  class="home"src="static/images/home.png" onclick="href = '/';">
+            <a href="/"><img  class="home" src="static/images/home.png"></a>
         </div>
     </body>
 </html>

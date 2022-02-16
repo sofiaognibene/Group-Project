@@ -11,7 +11,6 @@ body{
     color: rgb(204,204,204);
 }
 div.title{
-    /*background-image: linear-gradient(rgb(1,64,82), rgb(1,43,54));*/
     color: white;
     margin: 0px;
     padding-left: 0.5%;
@@ -57,7 +56,6 @@ div.body, div.quotes{
     margin-right: 8%;
     padding: 2% 2% 2% 2%;
     background-color: rgba(76,86,162,0.7);
-    /*background-blend-mode: 0.7;*/
 }
 div.quotes{
     padding: 2% 10% 2% 10%;
@@ -68,7 +66,6 @@ table{
     margin-left:5%;
     table-layout: fixed;
     width: 90%;
-    text-align: 
 }
 td{
     font-size: 130%
