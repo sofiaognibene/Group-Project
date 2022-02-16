@@ -11,12 +11,12 @@ def home():
 
 @app.route("/selector", methods=['POST'])
 def answer():
-    question = request.form["request"]
+    question = eval(request.form["request"])
     text = request.form["txt"]
     result = mn.OperationManager.manager(registry, question, text)
-    if "rqc" in question:
+    if question[0]=="rqc":
         return render_template("quotes.html", data=result[0], title= result[1], val = result[2])
-    elif "sm" in question or "mtd" in question:
+    elif question[0]=="mtd" or question[0]=="sm":
         return render_template("metadata.html", collection=result[0], title=result[1])
     else:
         return render_template("answers.html", data=result[0], title=result[1], val = result[2])
