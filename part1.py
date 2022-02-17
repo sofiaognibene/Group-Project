@@ -61,11 +61,12 @@ class OperationManager():  # manages requests from the user, providing answers a
             title = registry[L[1]].name + " Quotes"
             return  [OperationBuilder.create(L[0], registry[L[1]].data, ['sentence'], input, L[2]), title, input]
         elif(L[0] =='t10'):
+            del_rows = []
             if (input == "n"):
                 input = ""
-                del_rows=['sentence','nsentence']
+                del_rows = ['sentence','nsentence']
             title = "Top 10 Associations among Gene and Disease"
-            return [OperationBuilder.create(L[0], registry['gene'].data, registry['disease'].data, ["geneid","gene_symbol","diseaseid","disease_name"],del_rows), title, input]
+            return [OperationBuilder.create(L[0], registry['gene'].data, registry['disease'].data, ["geneid","gene_symbol","diseaseid","disease_name"], del_rows), title, input]
         elif(L[0]=='as'):
             del_rows = []
             print(input)
