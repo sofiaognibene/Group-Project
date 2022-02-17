@@ -1,37 +1,47 @@
 from abc import ABC, abstractmethod
 from heapq import merge
+from pydoc import doc
 import pandas as pd
 
 class Operation(ABC):
-    def __init__(self, data: pd.DataFrame, description: str):
+    '''
+    Abstract class parent of all the operations. Its only attribute is data, a pd.Dataframe.
+    '''
+    def __init__(self, data: pd.DataFrame):
         self._data = data
-        self._description = description
 
     @abstractmethod
     def execute(self):
         pass
 
-    @property
-    def description(self) -> str:
-        return self._description
 
 class Dimensions(Operation):
+    '''
+    Its method execute uses pd.shape function to return the dimensions of its attribute data.
+    '''
     def __init__(self, data: pd.DataFrame):
-        super().__init__(data, "html?")
+        super().__init__(data)
 
     def execute(self) -> tuple:
         return self._data.shape
 
 class Labels(Operation):
+    '''
+    Its method execute returns the head of its attribute data.
+    '''
     def __init__(self, data: pd.DataFrame):
-        super().__init__(data, "html?")
+        super().__init__(data)
     def execute(self) -> list:
         return self._data.columns.values
 
 class RetrieveColumns(Operation):
+    '''
+    Its method execute returns specific columns of the dataframe stored in the attribute data.
+    Therefore, this class requires, in addition to the dataframe, the list of columns to return, if repetitions must be included, if it must be sorted and how.
+    '''
     def __init__(self, data: pd.DataFrame, columns: 'list[str]', repetitions: bool = True, sort: bool = False,
                  ascending: bool = True, sorter: str = ""):
-        super().__init__(data, "It selects specific columns, eventually deleting repetitions and ordering them.")
+        super().__init__(data)
         self.__columns = columns
         self.__repetitions = repetitions
         self.__sort = sort
@@ -49,8 +59,13 @@ class RetrieveColumns(Operation):
             return a
 
 class RetrieveColumnCondition(Operation):
+    '''
+    Its method execute returns specific columns of the dataframe stored in the attribute data under specific conditions.
+    Therefore, this class requires, in addition to the dataframe, the list of columns to return, the condition in the form of input and the columns where we are looking for that input.
+    It uses the query function.
+    '''
     def __init__(self, data: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]'):
-        super().__init__(data, "html?")
+        super().__init__(data)
         self._columns = columns
         self._input = input
         self._options = options
@@ -67,29 +82,36 @@ class RetrieveColumnCondition(Operation):
         return self._data.query(q).loc[:, self._columns]
 
 class Merger(Operation):
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame):
-        super().__init__(data, "Merger")
+    '''
+    Taking as attributes two pd.DataFrame, its execute method returs their merging, using the merge function.
+    '''
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, del_rows: 'list[str]' = []):
+        super().__init__(data)
         self.__data2 = data2
+        self.__to_del = del_rows
 
     def execute(self) -> pd.DataFrame:
+        self._data = self._data.drop(columns = self.__to_del)
+        self.__data2= self.__data2.drop(columns = self.__to_del)
+        print(self._data.columns.values)
         return self._data.merge(self.__data2)
 
 class Top10(Operation):
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]'):
-        super().__init__(data, "html?")
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', del_rows: 'list[str]' = []):
+        super().__init__(data)
         self.__data2 = data2
         self.__columns = columns
+        self.__to_del = del_rows
 
     def execute(self) -> pd.DataFrame:
-        output = Merger(self._data, self.__data2).execute()
+        output = Merger(self._data, self.__data2, self.__to_del).execute()
         output_loc = RetrieveColumns(data=output, columns=self.__columns).execute()
         return output_loc.groupby(output_loc.columns.tolist()).size().reset_index().rename(
             columns={0: 'counts'}).sort_values('counts', ascending=False).iloc[0:10]
 
 class Associations(RetrieveColumnCondition):
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]'):
-        super().__init__(Merger(data, data2).execute(), columns, input, options)
-        self._description = "<hmtl>"
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]', del_rows: 'list[str]' = []):
+        super().__init__(Merger(data, data2, del_rows).execute(), columns, input, options)
 
     def execute(self) -> pd.DataFrame:
         return super().execute().drop_duplicates()

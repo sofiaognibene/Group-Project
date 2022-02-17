@@ -32,13 +32,13 @@
             <label for="disease_reference_list">Obtain the <b>list of sentences</b> related to a specific disease ID/disease name (write it in the box below).</label>
             <br>
             <input type="radio" required id="association" name="request" value="['t10']">
-            <label for="association">Obtain the <b>10-top most frequent distinct association</b> between genes and diseases.</label>
+            <label for="association">Obtain the <b>10-top most frequent distinct association</b> between genes and diseases. (Please specify if sentence correlation has to be ignored, writing <b>n</b> in the textbox below.)</label>
             <br>
             <input type="radio" required id="disease_gene_list" name="request" value="['as', 'gene','disease',['diseaseid', 'disease_name', 'disease_type'],['geneid', 'gene_symbol']]">
-            <label for="disease_reference_list">Obtain the <b>list of diseases</b> related to a specific gene ID/gene symbol (write it in the box below).</label>
+            <label for="disease_reference_list">Obtain the <b>list of diseases</b> related to a specific gene ID/gene symbol (write it in the box below. Please specify if sentence correlation has to be ignored, writing after the input <b>n</b>, separated by a space).</label>
             <br>
             <input type="radio" required id="gene_disease_list" name="request" value="['as', 'disease','gene',['geneid', 'gene_symbol','organism'],['diseaseid', 'disease_name']]">
-            <label for="disease_reference_list">Obtain the <b>list of genes</b> related to a specific disease ID/disease name (write it in the box below).</label>
+            <label for="disease_reference_list">Obtain the <b>list of genes</b> related to a specific disease ID/disease name (write it in the box below. Please specify if sentence correlation has to be ignored, writing after the input <b>n, separated by a space</b>).</label>
             <br>
             <p>Please enter additional inputs (if needed).</p>
             <label for="txt">ID, name or symbol</label>

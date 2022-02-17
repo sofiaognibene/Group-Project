@@ -22,5 +22,5 @@ def answer():
         return render_template("answers.html", data=result[0], title=result[1], val = result[2])
 
 if __name__ == '__main__':
-    registry = mn.read()
+    registry = mn.DataSet.read([['gene',"Gene Dataset","gene_evidences.tsv"],['disease',"Disease Dataset","disease_evidences.tsv"]])
     app.run()

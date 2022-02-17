@@ -2,10 +2,16 @@ from numpy import column_stack
 import pandas as pd
 import part2 as op
 
-class DataSet():
+class DataSet():  # creates an object with the name of the dataset and its data content
     def __init__(self, name: str, path: str):
         self.__name = name
         self.__data = pd.read_csv(path, "\t")
+    @staticmethod
+    def read(directory: list):
+        collection= {}
+        for i in directory:
+            collection[i[0]]=DataSet(i[1],i[2])
+        return collection
     
     @property
     def name(self) -> str:
@@ -14,7 +20,7 @@ class DataSet():
     def data(self) -> pd.DataFrame:
         return self.__data
 
-class OperationBuilder():
+class OperationBuilder():  #it stores the list of operations, providing the connection between them and the OperationManager
     operations_dict = {
         'mtd': op.Dimensions,
         'sm': op.Labels,
@@ -34,7 +40,7 @@ class OperationBuilder():
         else:
             return None
 
-class OperationManager():
+class OperationManager():  # manages requests from the user, providing answers and the title to visualize
     @staticmethod
     def manager(registry: dict, L : list, input : str ="") -> list:
         if (L[0]=='mtd'):
@@ -55,13 +61,18 @@ class OperationManager():
             title = registry[L[1]].name + " Quotes"
             return  [OperationBuilder.create(L[0], registry[L[1]].data, ['sentence'], input, L[2]), title, input]
         elif(L[0] =='t10'):
+            if (input == "n"):
+                input = ""
+                del_rows=['sentence','nsentence']
             title = "Top 10 Associations among Gene and Disease"
-            return [OperationBuilder.create(L[0], registry['gene'].data, registry['disease'].data, ["geneid","gene_symbol","diseaseid","disease_name"]), title, input]
+            return [OperationBuilder.create(L[0], registry['gene'].data, registry['disease'].data, ["geneid","gene_symbol","diseaseid","disease_name"],del_rows), title, input]
         elif(L[0]=='as'):
+            del_rows = []
+            print(input)
+            s = input[input.rfind(" ")+1:len(input):]
+            print(s)
+            if (s == "n"):
+                input = input[:len(input)-2:]
+                del_rows=['sentence','nsentence']
             title ="Correlation between specific " +registry[L[1]].name[:registry[L[1]].name.index(" "):] + " and " + registry[L[2]].name[:registry[L[2]].name.index(" "):]
-            return [OperationBuilder.create(L[0], registry[L[1]].data, registry[L[2]].data, L[3], input, L[4]), title, input]
-
-def read():
-    df_disease = DataSet("Disease Dataset","disease_evidences.tsv")
-    df_gene = DataSet("Gene Dataset","gene_evidences.tsv")
-    return {"gene" : df_gene, "disease" : df_disease}
+            return [OperationBuilder.create(L[0], registry[L[1]].data, registry[L[2]].data, L[3], input, L[4], del_rows), title, input]
