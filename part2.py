@@ -106,8 +106,8 @@ class Top10(Operation):
     def execute(self) -> pd.DataFrame:
         output = Merger(self._data, self.__data2, self.__to_del).execute()
         output_loc = RetrieveColumns(data=output, columns=self.__columns).execute()
-        return output_loc.groupby(output_loc.columns.tolist()).size().reset_index().rename(
-            columns={0: 'counts'}).sort_values('counts', ascending=False).iloc[0:10]
+        return output_loc.groupby(output_loc.columns.tolist(), as_index=False).size().\
+            sort_values('size', ascending=False).iloc[0:10]
 
 class Associations(RetrieveColumnCondition):
     def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]', del_rows: 'list[str]' = []):
