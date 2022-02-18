@@ -69,9 +69,7 @@ class OperationManager():  # manages requests from the user, providing answers a
             return [OperationBuilder.create(L[0], registry['gene'].data, registry['disease'].data, ["geneid","gene_symbol","diseaseid","disease_name"], del_rows), title, input]
         elif(L[0]=='as'):
             del_rows = []
-            print(input)
             s = input[input.rfind(" ")+1:len(input):]
-            print(s)
             if (s == "n"):
                 input = input[:len(input)-2:]
                 del_rows=['sentence','nsentence']

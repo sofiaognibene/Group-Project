@@ -85,23 +85,22 @@ class Merger(Operation):
     '''
     Taking as attributes two pd.DataFrame, its execute method returs their merging, using the merge function.
     '''
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, del_rows: 'list[str]' = []):
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, del_columns: 'list[str]' = []):
         super().__init__(data)
         self.__data2 = data2
-        self.__to_del = del_rows
+        self.__to_del = del_columns
 
     def execute(self) -> pd.DataFrame:
         self._data = self._data.drop(columns = self.__to_del)
         self.__data2= self.__data2.drop(columns = self.__to_del)
-        print(self._data.columns.values)
         return self._data.merge(self.__data2)
 
 class Top10(Operation):
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', del_rows: 'list[str]' = []):
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', del_columns: 'list[str]' = []):
         super().__init__(data)
         self.__data2 = data2
         self.__columns = columns
-        self.__to_del = del_rows
+        self.__to_del = del_columns
 
     def execute(self) -> pd.DataFrame:
         output = Merger(self._data, self.__data2, self.__to_del).execute()
@@ -110,8 +109,8 @@ class Top10(Operation):
             sort_values('size', ascending=False).iloc[0:10]
 
 class Associations(RetrieveColumnCondition):
-    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]', del_rows: 'list[str]' = []):
-        super().__init__(Merger(data, data2, del_rows).execute(), columns, input, options)
+    def __init__(self, data: pd.DataFrame, data2: pd.DataFrame, columns: 'list[str]', input: str, options: 'list[str]', del_columns: 'list[str]' = []):
+        super().__init__(Merger(data, data2, del_columns).execute(), columns, input, options)
 
     def execute(self) -> pd.DataFrame:
         return super().execute().drop_duplicates()
