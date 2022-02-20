@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from heapq import merge
-from pydoc import doc
 import pandas as pd
 
 class Operation(ABC):

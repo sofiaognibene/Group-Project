@@ -1,4 +1,3 @@
-from numpy import column_stack
 import pandas as pd
 import part2 as op
 

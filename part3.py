@@ -1,4 +1,3 @@
-from crypt import methods
 import part1 as mn
 from flask import Flask, render_template, request
 
