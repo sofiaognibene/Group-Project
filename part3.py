@@ -10,6 +10,7 @@ def home():
 
 @app.route("/selector", methods=['POST'])
 def answer():
+     # it forwards questions to part1 and displays answers
     question = eval(request.form["request"])
     text = request.form["txt"]
     result = mn.OperationManager.manager(registry, question, text)

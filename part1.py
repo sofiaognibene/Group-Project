@@ -1,10 +1,12 @@
 import pandas as pd
 import part2 as op
 
-class DataSet():  # creates an object with the name of the dataset and its data content
+
+class DataSet():  # It creates an object with the name of the dataset and its data content
     def __init__(self, name: str, path: str):
         self.__name = name
         self.__data = pd.read_csv(path, "\t")
+
     @staticmethod
     def read(directory: list):
         collection= {}
@@ -15,11 +17,14 @@ class DataSet():  # creates an object with the name of the dataset and its data 
     @property
     def name(self) -> str:
         return self.__name
+
     @property
     def data(self) -> pd.DataFrame:
         return self.__data
 
-class OperationBuilder():  #it stores the list of operations, providing the connection between them and the OperationManager
+
+
+class OperationBuilder():  # It stores the list of operations, providing the connection between them and the OperationManager
     operations_dict = {
         'mtd': op.Dimensions,
         'sm': op.Labels,
@@ -39,7 +44,8 @@ class OperationBuilder():  #it stores the list of operations, providing the conn
         else:
             return None
 
-class OperationManager():  # manages requests from the user, providing answers and the title to visualize
+
+class OperationManager():  # it manages requests from the user, providing answers and the title to visualize
     @staticmethod
     def manager(registry: dict, L : list, input : str ="") -> list:
         if (L[0]=='mtd'):
