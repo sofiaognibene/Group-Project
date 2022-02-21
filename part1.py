@@ -61,7 +61,7 @@ class OperationManager():  # it manages requests from the user, providing answer
             return[{registry['gene'].name : pd.DataFrame(OperationBuilder.create(L[0],registry['disease'].data)), registry['disease'].name : pd.DataFrame(OperationBuilder.create(L[0],registry['gene'].data))},title]
         elif(L[0]=='el'):
             title = registry[L[1]].name[:registry[L[1]].name.index(" "):] + " List"
-            return [OperationBuilder.create(L[0], registry[L[1]].data, L[2], False, True, True, L[3]), title, input]
+            return [OperationBuilder.create(L[0], registry[L[1]].data, L[2], False, True, True, L[3]), title, ""]
         elif(L[0]=='rqc'):
             title = registry[L[1]].name + " Quotes"
             return  [OperationBuilder.create(L[0], registry[L[1]].data, ['sentence'], input, L[2]), title, input]
@@ -71,7 +71,7 @@ class OperationManager():  # it manages requests from the user, providing answer
                 input = ""
                 del_rows = ['sentence','nsentence']
             title = "Top 10 Associations among Gene and Disease"
-            return [OperationBuilder.create(L[0], registry['gene'].data, registry['disease'].data, ["geneid","gene_symbol","diseaseid","disease_name"], del_rows), title, input]
+            return [OperationBuilder.create(L[0], registry['gene'].data, registry['disease'].data, ["geneid","gene_symbol","diseaseid","disease_name"], del_rows), title, ""]
         elif(L[0]=='as'):
             del_rows = []
             s = input[input.rfind(" ")+1:len(input):]
