@@ -58,7 +58,7 @@ class OperationManager():  # it manages requests from the user, providing answer
             return[collection, title]
         elif (L[0]=='sm'):
             title = "Semantics"
-            return[{registry['gene'].name : pd.DataFrame(OperationBuilder.create(L[0],registry['disease'].data)), registry['disease'].name : pd.DataFrame(OperationBuilder.create(L[0],registry['gene'].data))},title]
+            return[{registry['gene'].name : pd.DataFrame(OperationBuilder.create(L[0],registry['gene'].data)), registry['disease'].name : pd.DataFrame(OperationBuilder.create(L[0],registry['disease'].data))},title]
         elif(L[0]=='el'):
             title = registry[L[1]].name[:registry[L[1]].name.index(" "):] + " List"
             return [OperationBuilder.create(L[0], registry[L[1]].data, L[2], False, True, True, L[3]), title, ""]
